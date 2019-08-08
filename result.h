@@ -852,9 +852,9 @@ bool operator==(const Result<T, E> &lhs, types::Err<E> err) {
   ({                                                                           \
     auto res = __VA_ARGS__;                                                    \
     if (!res.isOk()) {                                                         \
-      using E = details::ResultErrType<decltype(res)>::type;                   \
-      return types::Err<E>(res.storage().get<E>());                            \
+      using E = typename details::ResultErrType<decltype(res)>::type;          \
+      return types::Err<E>(res.storage().template get<E>());                   \
     }                                                                          \
-    using T = details::ResultOkType<decltype(res)>::type;                      \
-    res.storage().get<T>();                                                    \
+    using T = typename details::ResultOkType<decltype(res)>::type;             \
+    res.storage().template get<T>();                                           \
   })
