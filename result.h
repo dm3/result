@@ -722,14 +722,20 @@ struct Result {
 		storage_.construct(std::move(err));
 	}
 
+        Result& operator=(Result&& other) {
+                if (other.isOk()) {
+                        details::Constructor<T, E>::move(std::move(other.storage_), storage_, details::ok_tag());
+                        ok_ = true;
+                } else {
+                        details::Constructor<T, E>::move(std::move(other.storage_), storage_, details::err_tag());
+                        ok_ = false;
+                }
+
+                return *this;
+        }
+
 	Result(Result&& other) {
-		if (other.isOk()) {
-			details::Constructor<T, E>::move(std::move(other.storage_), storage_, details::ok_tag());
-			ok_ = true;
-		} else {
-			details::Constructor<T, E>::move(std::move(other.storage_), storage_, details::err_tag());
-			ok_ = false;
-		}
+                *this = std::move(other);
 	}
 
 	Result(const Result& other) {
